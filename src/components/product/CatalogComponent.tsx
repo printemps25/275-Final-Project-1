@@ -1,68 +1,34 @@
-import React, { useEffect, useState } from "react";
-import {
-    Container,
-    Row,
-    Col,
-    Form,
-    FormGroup,
-    FormControl,
-    FormLabel,
-    Button
-} from "react-bootstrap";
-import { Cart, cart_HookCartState, getCart } from "../interface/cart";
+import React, { useState } from "react";
+import { Container } from "react-bootstrap";
+import { ShippingComponent } from "./ShippingComponent"; // Import the ShippingComponent
 
-export const CartPage = (): JSX.Element => {
-    const [cart, setCart] = useState<Cart>(getCart());
-    const [shippingAddress, setShippingAddress] = useState({
-        fullName: "",
-        streetAddress: "",
-        city: "",
-        state: "",
-        zipCode: ""
-    });
+interface Product {
+    id: number;
+    name: string;
+}
 
-    useEffect(() => cart_HookCartState(setCart), []);
+interface CartItem {
+    product: Product;
+    quantity: number;
+}
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setShippingAddress({
-            ...shippingAddress,
-            [event.target.name]: event.target.value
-        });
-    };
+export const CatalogComponent = (): JSX.Element => {
+    const [cart, setCart] = useState<CartItem[]>([
+        { product: { id: 1, name: "Product A" }, quantity: 2 },
+        { product: { id: 2, name: "Product B" }, quantity: 1 }
+    ]);
 
     return (
         <Container fluid className="flex-grow-1 ez-bg">
             <Container className="h-100 side-shadow">
                 <h1 className="p-4">Your Cart</h1>
                 <hr></hr>
-                {cart.items.map((item, idx) => (
+                {cart.map((item: CartItem, idx: number) => (
                     <p key={idx}>
                         {item.product.name} - x{item.quantity}
                     </p>
                 ))}
-                <h2>Shipping Address</h2>
-                <Form>
-                    <FormGroup as={Row} controlId="fullName">
-                        <FormLabel column sm="2">
-                            Full Name:
-                        </FormLabel>
-                        <Col sm="10">
-                            <FormControl
-                                type="text"
-                                name="fullName"
-                                value={shippingAddress.fullName}
-                                onChange={handleInputChange}
-                            />
-                        </Col>
-                    </FormGroup>
-                    {/* Add other form groups for streetAddress, city, state, and zipCode */}
-                </Form>
-                <Button
-                    variant="primary"
-                    onClick={() => console.log("Submit shipping address")}
-                >
-                    Submit Shipping Address
-                </Button>
+                <ShippingComponent /> {/* Add the ShippingComponent here */}
             </Container>
         </Container>
     );
